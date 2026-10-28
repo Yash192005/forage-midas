@@ -11,8 +11,12 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DirtiesContext
-@EmbeddedKafka(partitions = 1, brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
+@EmbeddedKafka(partitions = 1, brokerProperties = {
+        "listeners=PLAINTEXT://localhost:9092",
+        "port=9092"
+})
 public class TaskFiveTests {
+
     static final Logger logger = LoggerFactory.getLogger(TaskFiveTests.class);
 
     @Autowired
@@ -27,26 +31,48 @@ public class TaskFiveTests {
     @Autowired
     private BalanceQuerier balanceQuerier;
 
-
     @Test
     void task_five_verifier() throws InterruptedException {
+
+        System.out.println("STEP 1");
+
         userPopulator.populate();
+
+        System.out.println("STEP 2");
+
         String[] transactionLines = fileLoader.loadStrings("/test_data/rueiwoqp.tyruei");
+
+        System.out.println("STEP 3");
+
         for (String transactionLine : transactionLines) {
             kafkaProducer.send(transactionLine);
         }
+
+        System.out.println("STEP 4");
+
         Thread.sleep(2000);
+
+        System.out.println("STEP 5");
 
         logger.info("----------------------------------------------------------");
         logger.info("----------------------------------------------------------");
         logger.info("----------------------------------------------------------");
         logger.info("submit the following output to complete the task (include begin and end output denotations)");
-        StringBuilder output = new StringBuilder("\n").append("---begin output ---").append("\n");
+
+        StringBuilder output = new StringBuilder();
+        output.append("\n");
+        output.append("---begin output ---\n");
+
+        System.out.println("STEP 6");
+
         for (int i = 0; i < 13; i++) {
             Balance balance = balanceQuerier.query((long) i);
             output.append(balance.toString()).append("\n");
         }
+
         output.append("---end output ---");
-        logger.info(output.toString());
+
+        System.out.println("STEP 7");
+        System.out.println(output.toString());
     }
 }
